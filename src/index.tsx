@@ -5,8 +5,8 @@ interface Props {
   text: string
 }
 
-const ExampleComponent = ({ text }: Props) => {
+const AdomBlocksEditor = ({ text }: Props) => {
   return <div className={styles.test}>Example Component: {text}</div>
 }
 
-export default ExampleComponent
+export default AdomBlocksEditor
