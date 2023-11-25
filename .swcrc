@@ -1,12 +1,16 @@
 {
-    "$schema": "https://json.schemastore.org/swcrc",
-    "jsc": {
-      "parser": {
-        "syntax": "typescript",
-        "tsx": true,
-        "decorators": false,
-        "dynamicImport": false
-      },
+  "$schema": "https://json.schemastore.org/swcrc",
+  "jsc": {
+    "parser": {
+      "syntax": "typescript",
+      "tsx": true,
+      "decorators": false,
+      "dynamicImport": false
+    },
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["*"]
+    },
     "transform": {
       "react": {
         "runtime": "automatic"
@@ -17,7 +21,6 @@
     "externalHelpers": false,
     // Requires v1.2.50 or upper and requires target to be es2016 or upper.
     "keepClassNames": false
-    },
-    "minify": true
-   }
-   
+  },
+  "minify": true
+}
