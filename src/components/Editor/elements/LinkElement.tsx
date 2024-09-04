@@ -1,15 +1,16 @@
-import { useSlateStatic } from "slate-react";
+// import { useSlateStatic } from "slate-react";
 import { ExternalLinkIcon, UnlinkIcon } from '@/lib/icons';
-import { removeLink } from "../plugins/editor";
+// import { removeLink } from "../plugins/editor";
 import { Button } from "@/components/ui/button"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { DefaultElementProps } from "./types";
 
-const LinkElement = ({ attributes, element, children }) => {
-  const editor = useSlateStatic();
+const LinkElement = ({ attributes, element, children }: DefaultElementProps) => {
+  // const editor = useSlateStatic();
 
   return (
     <Popover>
@@ -23,7 +24,8 @@ const LinkElement = ({ attributes, element, children }) => {
           <ExternalLinkIcon />
           {element.href}
         </a>
-        <Button size="supermini" onClick={() => removeLink(editor)}>
+        {/* <Button size="supermini" onClick={() => removeLink(editor)}> */}
+        <Button size="supermini" onClick={() => {}}>
           <UnlinkIcon />
         </Button>
       </PopoverContent>

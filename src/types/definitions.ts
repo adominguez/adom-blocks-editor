@@ -1,19 +1,29 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {ReactNode} from 'react';
+import { BaseEditor, Descendant, Editor, Element } from 'slate';
+import { HistoryEditor } from 'slate-history';
+import { ReactEditor } from 'slate-react';
 
-export interface Block {
-  key: string;
-  block: BlockItem[];
-  editing?: boolean;
-  hideToolbar?: boolean;
-}
+export type Variant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'paragraph' | 'span';
 
-export interface BlockItem {
+export interface AdomBlocksEditorProps {}
+
+export interface BlockValue extends Element {
   type: string;
-  variant?: string;
+  variant?: Variant;
   children: { text: string }[];
 }
 
-export interface AdomBlocksEditorProps {}
+export interface Block {
+  key: string;
+  hideToolbar: boolean;
+  block: BlockValue[];
+  editing: boolean;
+}
+
+export interface UseBlockState  {
+  blocks: Block[];
+}
 
 export interface ForwardedEditableComponentProps {
   id: string;
@@ -21,16 +31,25 @@ export interface ForwardedEditableComponentProps {
   // Asegúrate de agregar las propiedades necesarias aquí según EditableComponent
 }
 
-export interface LeafProps {
-  attributes: any;
-  children: React.ReactNode;
-  leaf: {
-    bold: boolean;
-    italic: boolean;
-    isAlignLeft: boolean;
-    isAlignCenter: boolean;
-    isAlignRight: boolean;
-  };
+export interface CustomEditorInterface extends Editor, ReactEditor, HistoryEditor, BaseEditor {
+  handleEmbed: (editor: Editor, e: ClipboardEvent) => void;
+  handlePaste: (editor: Editor, e: ClipboardEvent) => void;
+  handleLink: (editor: Editor, url: string, linkText: string) => void;
+  toggleLink: (editor: Editor) => void;
+  isLinkActive: (editor: Editor) => boolean;
+  isBoldActive: (editor: Editor) => boolean;
+  isBoldMarkActive: (editor: Editor) => boolean;
+  isItalicMarkActive: (editor: Editor) => boolean;
+  isAlignLeft: (editor: Editor) => boolean;
+  isAlignCenter: (editor: Editor) => boolean;
+  isAlignRight: (editor: Editor) => boolean;
+  isCodeBlockActive: (editor: Editor) => boolean;
+  toggleBoldMark: (editor: Editor) => void;
+  toggleItalicMark: (editor: Editor) => void;
+  toggleAlignLeftMark: (editor: Editor) => void;
+  toggleAlignCenterMark: (editor: Editor) => void;
+  toggleAlignRightMark: (editor: Editor) => void;
+  toggleCodeBlock: (editor: Editor) => void;
 }
 
 export interface EmbedRegex {
@@ -38,31 +57,11 @@ export interface EmbedRegex {
   type: string;
 }
 
-export type Variant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'paragraph' | 'span';
-
 export interface TypographyProps {
   variant?: Variant;
   className?: string;
   children?: ReactNode;
   leading?: number;
-  [key: string]: any;
-}
-
-export interface DefaultElementProps {
-  attributes: any;
-  children: ReactNode;
-}
-
-export interface HeadingElementProps extends DefaultElementProps {
-  element: {
-    type: string;
-    variant: Variant;
-  }
-}
-
-export interface AlignTextProps extends DefaultElementProps {
-  element: Element;
-  className: string;
 }
 
 export interface DefaultIconProps {
@@ -74,16 +73,16 @@ export interface DefaultIconProps {
 
 export interface ToolbarButtonProps {
   children: ReactNode;
-  onMouseDown: (e: React.MouseEvent, editor: any) => void;
+  onMouseDown: (e: React.MouseEvent, editor: CustomEditorInterface) => void;
   alt: string;
   shortcut: string;
   active?: boolean;
   variant?: string;
-  editor: any;
+  editor: CustomEditorInterface;
 }
 
 export interface FocusedToolbarComponentProps {
-  editor: any;
+  editor: CustomEditorInterface;
   index: number;
   onUpdateType: (type: any, index: number) => void;
   onRemoveBlock: () => void;

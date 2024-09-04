@@ -1,5 +1,7 @@
-import React, { forwardRef, Ref } from "react"
-import { TypographyProps, Variant } from "@/types/definitions"
+import React, { forwardRef, Ref } from "react";
+import { TypographyProps } from "@/types/definitions";
+
+type Variant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'paragraph' | 'span';
 
 const POSSIBLE_VARIANTS: Variant[] = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'paragraph', 'span'];
 
@@ -11,12 +13,13 @@ const INITIAL_CLASSES: Record<Variant, string> = {
   h5: 'scroll-m-20 text-l font-semibold tracking-tight',
   h6: 'scroll-m-20 text-l tracking-tighter',
   p: '[&:not(:first-child)]:mt-6',
+  paragraph: '[&:not(:first-child)]:mt-6',
   span: '',
 };
 
 const Typography = forwardRef(function Typography(
   { variant = 'paragraph', className, children, leading, ...rest }: TypographyProps,
-  ref: Ref<any>
+  ref: Ref<HTMLParagraphElement>
 ) {
   const getType = () => {
     const isPossible = POSSIBLE_VARIANTS.find((item) => variant.toLowerCase() === item) ?? 'paragraph';

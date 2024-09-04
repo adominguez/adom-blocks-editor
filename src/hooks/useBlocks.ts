@@ -1,41 +1,49 @@
 import { useState } from 'react'
-import { Block} from '@/types/definitions'
+import { Block, UseBlockState } from '@/types/definitions'
 
 const INITIAL_HEADING: Block = {
   key: 'initial-heading',
   hideToolbar: true,
+  editing: false,
   block: [{
     type: 'heading',
     variant: 'h1',
     children: [{
       text: ''
     }],
-}]}
+  }],
+}
 
 const INITIAL_PARAGRAPH: Block = {
   key: 'initial-paragraph',
+  editing: false,
+  hideToolbar: false,
   block: [{
-  type: 'paragraph',
-  children: [{
-    text: ''
-  }],
-}]}
+    type: 'paragraph',
+    children: [{
+      text: ''
+    }],
+  }]
+}
 
 const NEW_BLOCK = (): Block => ({
   key: crypto.randomUUID(),
+  editing: false,
+  hideToolbar: true,
   block: [{
-  type: 'paragraph',
-  children: [{
-    text: ''
-  }],
-}]})
+    type: 'paragraph',
+    children: [{
+      text: ''
+    }],
+  }]
+})
 
 const INITIAL_VALUES: Block[] = [INITIAL_HEADING, INITIAL_PARAGRAPH]
 
 export default function useBlock() {
-    const [blocks, setBlocks] = useState<Block[]>(INITIAL_VALUES);
+  const [blocks, setBlocks] = useState<UseBlockState['blocks']>(INITIAL_VALUES);
 
-  const addNewBlock = (index = blocks.length, newBlock = NEW_BLOCK()): Block | undefined  => {
+  const addNewBlock = (index = blocks.length, newBlock = NEW_BLOCK()): Block | undefined => {
     const [nextChildren] = blocks[index + 1]?.block?.[0]?.children || []
     if (nextChildren && !nextChildren.text) return undefined
     setBlocks([...blocks.slice(0, index + 1), newBlock, ...blocks.slice(index + 1, blocks.length)]);
@@ -45,7 +53,7 @@ export default function useBlock() {
   const editingField = (i: number) => {
     setBlocks((oldData) => oldData.map((item, index) => ({
       ...item,
-      editing: i === index && item.block.some(({children}) => children.some(item => item.text))
+      editing: i === index && item.block.some(({ children }) => children.some(item => item.text))
     })))
   }
 
@@ -93,5 +101,5 @@ export default function useBlock() {
     }
   }
 
-  return {blocks, addNewBlock, removeBlock, editingField, removeAllPopover, removeEditingField, updateBlockByIndex, moveUpBlock, moveDownBlock}
+  return { blocks, addNewBlock, removeBlock, editingField, removeAllPopover, removeEditingField, updateBlockByIndex, moveUpBlock, moveDownBlock }
 }

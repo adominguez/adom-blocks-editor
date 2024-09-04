@@ -1,8 +1,6 @@
-import { FC } from "react";
-import { DefaultElementProps } from "@/types/definitions";
+import { CodeElementProps } from "./types";
 
-
-const CodeElement: FC<DefaultElementProps> = ({ attributes, children }) => (
+const CodeElement = ({ attributes, children }: CodeElementProps) => (
   <pre {...attributes} className='p-2 text-card bg-muted-foreground'>
     <code>{children}</code>
   </pre>

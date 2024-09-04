@@ -1,7 +1,7 @@
 import { FC } from "react";
-import { LeafProps } from "@/types/definitions";
+import { CustomLeafProps } from "@/types/definitions";
 
-const Leaf: FC<LeafProps> = ({ attributes, children, leaf }) => (
+const Leaf: FC<CustomLeafProps> = ({ attributes, children, leaf }) => (
   <span
     {...attributes}
     className={`${leaf.bold ? "font-bold" : ""} ${leaf.italic ? "italic" : ""}

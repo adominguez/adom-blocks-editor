@@ -1,188 +1,177 @@
-import { Editor, Element, Transforms, Range, BaseEditor } from "slate";
-import { EmbedRegex } from '@/types/definitions';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Editor, Element, Transforms, Range } from "slate"
 
-const embedRegex: EmbedRegex[] = [
+const embedRegex = [
   {
     regex: /https:\/\/www\.youtube\.com\/watch\?v=(\w+)/,
     type: 'youtube',
   }
-];
+]
 
-export const withEmbeds = (editor: BaseEditor): BaseEditor => {
-  const { insertData } = editor;
+export const withEmbeds = (editor: any) => {
+  const { insertData } = editor
 
-  editor.insertData = (data: DataTransfer) => {
-    console.log(data.getData('text/plain'));
-    return insertData(data);
-  };
+  editor.insertData = (data: any) => {
+    console.log(data.getData('text/plain'))
+    return insertData(data)
+  }
+  return editor
+}
 
-  return editor;
-};
-
-export const withLinks = (editor: BaseEditor): BaseEditor => {
+export const withLinks = (editor: Editor) => {
   const { isInline } = editor;
 
-  editor.isInline = (element: Element) =>
+  editor.isInline = (element: any) =>
     element.type === "link" ? true : isInline(element);
 
   return editor;
 };
 
-export const createLinkNode = (href: string, text: string): Element => ({
+export const createLinkNode = (href: string, text: string) => ({
   type: "link",
   href,
   children: [{ text }]
 });
 
-export const removeLink = (editor: BaseEditor, opts: any = {}): void => {
+export const removeLink = (editor: Editor, opts = {}) => {
   Transforms.unwrapNodes(editor, {
     ...opts,
-    match: (n: BaseEditor) =>
+    match: (n: any) =>
       !Editor.isEditor(n) && Element.isElement(n) && n.type === "link"
   });
 };
 
 export const CustomEditor = {
-  handleEmbed(editor: Editor, e: ClipboardEvent): void {
-    const text = e.clipboardData.getData('text/plain');
+  handleEmbed(editor: Editor, e: any) {
+    const text = e.clipboardData.getData('text/plain')
     embedRegex.some(({ regex, type }) => {
-      const match = text.match(regex);
+      const match = text.match(regex)
       if (match) {
-        e.preventDefault();
-        const embed = { type, youtubeId: match[1], children: [{ text }] };
-        Transforms.insertNodes(editor, embed);
-        return true;
+        e.preventDefault()
+        const embed = { type, youtubeId: match[1], children: [{ text }] }
+        Transforms.insertNodes(editor, embed)
+        return true
       }
-      return false;
-    });
+      return false
+    })
   },
-
-  handlePaste(editor: Editor, e: ClipboardEvent): void {
-    CustomEditor.handleEmbed(editor, e);
+  handlePaste(editor: Editor, e: ClipboardEvent) {
+    CustomEditor.handleEmbed(editor, e)
   },
-
-  toggleLink(editor: Editor): void {
+  toggleLink(editor: any) {
     if (CustomEditor?.isLinkActive(editor)) {
-      removeLink(editor);
+      removeLink(editor)
     } else {
-      const url = window.prompt('Insertar URL del enlace:');
+      const url = window.prompt('Insertar URL del enlace:')
       if (url) {
-        const selectedText = Editor.string(editor, editor.selection);
-        const linkText = selectedText ? selectedText : 'Texto del enlace';
-        CustomEditor.handleLink(editor, url, linkText);
+        const selectedText = Editor.string(editor, editor.selection)
+        const linkText = selectedText ? selectedText : 'Texto del enlace'
+        CustomEditor.handleLink(editor, url, linkText)
       }
     }
   },
-
-  handleLink(editor: Editor, url: string, linkText: string): void {
+  handleLink(editor: Editor, url: string, linkText: string) {
+    console.log(linkText)
     if (!url) return;
 
     const { selection } = editor;
-    const link = createLinkNode(url, linkText);
-
+    const link = createLinkNode(url, url);
+  
     if (selection) {
       const [parentNode] = Editor.parent(
         editor,
-        selection.focus?.path || []
+        selection.focus?.path
       );
-
+  
+      // Remove the Link node if we're inserting a new link node inside of another
+      // link.
       if (parentNode.type === "link") {
         removeLink(editor);
       }
-
+  
       if (Range.isCollapsed(selection)) {
+        // Insert the new link in our last known location
         Transforms.insertNodes(editor, link, { select: true });
       } else {
+        // Wrap the currently selected range of text into a Link
         Transforms.wrapNodes(editor, link, { split: true });
+        // Remove the highlight and move the cursor to the end of the highlight
         Transforms.collapse(editor, { edge: "end" });
       }
     }
   },
-
-  isLinkActive(editor: Editor): boolean {
+  isLinkActive(editor: any) {
     const [link] = Editor.nodes(editor, {
       match: (n) => n.type === 'link',
     });
     return !!link;
   },
-
-  isBoldMarkActive(editor: Editor): boolean {
-    const marks = Editor.marks(editor);
-    return !!marks?.bold;
+  isBoldMarkActive(editor: any) {
+    const marks = Editor.marks(editor)
+    return !!marks?.bold
   },
-
-  isItalicMarkActive(editor: Editor): boolean {
-    const marks = Editor.marks(editor);
-    return !!marks?.italic;
+  isItalicMarkActive(editor: any) {
+    const marks = Editor.marks(editor)
+    return !!marks?.italic
   },
-
-  isAlignLeft(editor: Editor): boolean {
+  isAlignLeft(editor: any) {
     const [match] = Editor.nodes(editor, {
       match: (n) => n.type === 'alignLeft'
-    });
-    return !!match;
+    })
+    return !!match
   },
-
-  isAlignCenter(editor: Editor): boolean {
+  isAlignCenter(editor: any) {
     const [match] = Editor.nodes(editor, {
       match: (n) => n.type === 'alignCenter'
-    });
-    return !!match;
+    })
+    return !!match
   },
-
-  isAlignRight(editor: Editor): boolean {
+  isAlignRight(editor: any) {
     const [match] = Editor.nodes(editor, {
       match: (n) => n.type === 'alignRight'
-    });
-    return !!match;
+    })
+    return !!match
   },
-
-  isCodeBlockActive(editor: Editor): boolean {
+  isCodeBlockActive(editor: any) {
     const [match] = Editor.nodes(editor, {
       match: (n) => n.type === 'code'
-    });
-    return !!match;
+    })
+    return !!match
   },
-
-  toggleBoldMark(editor: Editor): void {
-    const isActive = CustomEditor.isBoldMarkActive(editor);
+  toggleBoldMark(editor: Editor) {
+    const isActive = CustomEditor.isBoldMarkActive(editor)
     if (isActive) {
-      Editor.removeMark(editor, 'bold');
+      Editor.removeMark(editor, 'bold')
     } else {
-      Editor.addMark(editor, 'bold', true);
+      Editor.addMark(editor, 'bold', true)
     }
   },
-
-  toggleItalicMark(editor: Editor): void {
-    const isActive = CustomEditor.isItalicMarkActive(editor);
+  toggleItalicMark(editor: Editor) {
+    const isActive = CustomEditor.isItalicMarkActive(editor)
     if (isActive) {
-      Editor.removeMark(editor, 'italic');
+      Editor.removeMark(editor, 'italic')
     } else {
-      Editor.addMark(editor, 'italic', true);
+      Editor.addMark(editor, 'italic', true)
     }
   },
-
-  toggleAlignLeftMark(editor: Editor): void {
-    const isActive = CustomEditor.isAlignLeft(editor);
+  toggleAlignLeftMark(editor: any) {
+    const isActive = CustomEditor.isAlignLeft(editor)
     Transforms.setNodes(editor, { type: isActive ? null : 'alignLeft' },
-      { match: (n) => Element.isElement(n) && Editor.isBlock(editor, n) });
+      { match: (n) => Element.isElement(n) && Editor.isBlock(editor, n) })
   },
-
-  toggleAlignCenterMark(editor: Editor): void {
-    const isActive = CustomEditor.isAlignCenter(editor);
+  toggleAlignCenterMark(editor: any) {
+    const isActive = CustomEditor.isAlignCenter(editor)
     Transforms.setNodes(editor, { type: isActive ? null : 'alignCenter' },
-      { match: (n) => Element.isElement(n) && Editor.isBlock(editor, n) });
+      { match: (n) => Element.isElement(n) && Editor.isBlock(editor, n) })
   },
-
-  toggleAlignRightMark(editor: Editor): void {
-    const isActive = CustomEditor.isAlignRight(editor);
+  toggleAlignRightMark(editor: any) {
+    const isActive = CustomEditor.isAlignRight(editor)
     Transforms.setNodes(editor, { type: isActive ? null : 'alignRight' },
-      { match: (n) => Element.isElement(n) && Editor.isBlock(editor, n) });
+      { match: (n) => Element.isElement(n) && Editor.isBlock(editor, n) })
   },
-
-  toggleCodeBlock(editor: Editor): void {
-    const isActive = CustomEditor.isCodeBlockActive(editor);
+  toggleCodeBlock(editor: any) {
+    const isActive = CustomEditor.isCodeBlockActive(editor)
     Transforms.setNodes(editor, { type: isActive ? null : 'code' },
-      { match: (n) => Element.isElement(n) && Editor.isBlock(editor, n) });
+      { match: (n) => Element.isElement(n) && Editor.isBlock(editor, n) })
   }
-};
+}

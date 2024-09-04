@@ -1,7 +1,6 @@
-import { FC } from "react"
 import Typography from "@/components/Typography/Typography"
-import { DefaultElementProps } from "@/types/definitions"
+import { DefaultElementProps } from "./types"
 
-const DefaultElement: FC<DefaultElementProps> = ({ attributes, children }) => <Typography variant="p" {...attributes}>{children}</Typography>
+const DefaultElement = ({ attributes, children }: DefaultElementProps) => <Typography variant="p" {...attributes}>{children}</Typography>
 
 export default DefaultElement

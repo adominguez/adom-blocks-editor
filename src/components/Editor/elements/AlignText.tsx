@@ -1,9 +1,7 @@
-import React from 'react';
 import Typography from "@/components/Typography/Typography";
-import { Element } from 'slate';
-import {AlignTextProps} from "@/types/definitions"
+import {AlignTextProps} from "./types"
 
-const AlignText: React.FC<AlignTextProps> = ({ attributes, children, element, className }) => (
+const AlignText= ({ attributes, children, element, className }: AlignTextProps) => (
   <Typography variant={element.variant} {...attributes} className={className}>
     {children}
   </Typography>
